@@ -1,0 +1,241 @@
+<?php
+
+
+class maxWeight {
+
+    var $maxSize = array();
+    var $count= array();
+    var $Bb = array();
+    var $Bv = array();
+    var $aux =0;
+    var $maxBWeight = 0;
+    var $number =0;
+    var $maxCount=0;
+    var $maxWeight = array();
+    var $array = array();
+    var $arrayAa = array();
+    var $arrayAw = array();
+
+
+    public function getMaxSize($N, $Aa, $Aw)
+    {
+
+        $j=1;
+        $s=1;
+        $max=100000;
+
+        $this->Initialize($max, $this->count);
+
+        for ($i=1;$i<=$N;$i++) {
+            $this->count[$j]=$this->count[$j]+ 1;
+
+            $this->arrayAa[$j][$s]=$Aa[$i];
+            $this->arrayAw[$j][$s]=$Aw[$i];
+
+            if($i+1<=$N) {
+                if ($Aa[$i] >= $Aa[$i + 1]) {
+                    $j++;
+                    $s=0;
+                }
+            }
+            $s++;
+        }
+
+        $this->groups = $j;
+
+        for ($i=1;$i<=$j;$i++){
+
+            $this->arrayAa[$j][$i]=$Aa[$i];
+            $this->arrayAw[$j][$i]=$Aw[$i];
+
+            if($this->count[$i]>=$this->count[$i+1]){
+                $this->maxSize=$this->count[$i];
+            }
+        }
+
+        $s=1;
+        for ($i=1;$i<=$j;$i++) {
+            {
+                if ($this->count[$i] == $this->maxSize) {
+                    for ($k=1;$k<=$this->maxSize;$k++)  {
+
+                        $this->Bb[$s][$k]= $this->arrayAa[$i][$k];
+                        $this->Bv[$s][$k]= $this->arrayAw[$i][$k];
+
+                    }
+                    $s++;
+                }
+            }
+
+        }
+
+         return $this->maxSize;
+
+    }
+
+    public function getMaxWeight($max)
+    {
+        $s=1;
+        $less=0;
+        $p=1;
+        $n=1;
+        $x=1;
+        $q=1;
+        $num=0;
+        $max=16;
+
+        $this->maxWeight[1]=0;
+        $quantity=1;
+
+        for($i=1; $i<=$max; $i++){
+
+
+            for($j=1; $j<=$this->maxSize-$less; $j++){
+
+                $this->maxWeight[$i]= $this->maxWeight[$i] + $this->Bv[$p][$j];
+
+
+            }
+
+            if($j==5) {
+                if ($p == $this->groups) {
+                    $quantity=$i;
+                    $i = $max + 1;
+                } else {
+                    $less++;
+                }
+            }
+
+            if($less>0 and $p<$this->groups) {
+
+                $this->aux = $this->maxSize - $less + 1;
+
+                for ($k = $j; $k <= $this->maxSize; $k++) {
+
+
+                    if($p==$this->groups-1){
+
+                            $q = $n + 2;
+
+                    }else {
+
+                        if ($x == 1) {
+
+                            if ($less == 1) {
+                                if ($k == $j) {
+                                    $q = $n + 1;
+
+                                } elseif ($k > $j) {
+                                    $q = $n + 2;
+
+                                }
+                            } else {
+                                $q = $n + 1;
+
+                            }
+                        }
+                        if ($x == 2) {
+                            if ($less == 1) {
+                                if ($k == $j) {
+                                    $q = $n + 2;
+
+                                } elseif ($k > $j) {
+                                    $q = $n + 2;
+
+                                }
+                            } else {
+                                if ($k == $j) {
+                                    $q = $n + 1;
+                                } elseif ($k > $j) {
+                                    if ($less > 2 and $k < $this->maxSize) {
+                                        $q = $n + 1;
+                                    } else {
+                                        $q = $n + 2;
+                                    }
+                                }
+                            }
+
+                        }
+                        if ($x == 3) {
+                            if($k==$j and $less>2){
+                                $q = $n + 1;
+                            }else {
+                                $q = $n + 2;
+                            }
+                        }
+                    }
+
+
+                    $this->array[1][$k]=$q;
+
+                    $this->maxWeight[$i] = $this->maxWeight[$i] + $this->Bv[$q][$k];
+
+                    $num++;
+                }
+
+                    $esto =$j+$num;
+
+
+                if($x<=$this->maxSize+1 and $k>$j){
+                    $x++;
+                }else{
+                    $x=1;
+                }
+
+            }
+
+
+            if($this->array[1][$j]==$this->maxSize-1){
+                $n=1;
+                $num=0;
+                $less++;
+                $x=1;
+                $q=1;
+            }
+            if($less==$this->maxSize){
+                $p++;
+                $less=0;
+
+            }
+
+
+
+        }
+
+
+        for ($s=1;$s<=$quantity;$s++) {
+            $this->aux=$this->maxBWeight;
+
+            if($this->maxWeight[$s]>=$this->maxWeight[$s+1]){
+                if($this->maxWeight[$s]>$this->aux){
+                    $this->maxBWeight=$this->maxWeight[$s];
+                }else{
+                    $this->maxBWeight=$this->aux;
+                }
+            }else{
+                if($this->maxWeight[$s+1]>$this->aux){
+                    $this->maxBWeight=$this->maxWeight[$s+1];
+                }else{
+                    $this->maxBWeight=$this->aux;
+                }
+            }
+        }
+
+        return $this->maxBWeight;
+
+    }
+
+
+    public function Initialize($max)
+    {
+        for ($i=1;$i<=$max;$i++){
+            $this->count[$i]=0;
+            $this->array[1][$i]=0;
+            $this->maxWeight[$i]=0;
+
+        }
+    }
+
+}
+
+?>
